@@ -10,17 +10,17 @@ from PIL import Image
 import numpy as np
 from typing import List
 
-from gradio_canny2image import process_canny
+#from gradio_canny2image import process_canny
 # from gradio_depth2image import process_depth
 # from gradio_hed2image import process_hed
 # from gradio_normal2image import process_normal
-# from gradio_hough2image import process_mlsd
+from gradio_hough2image import process_mlsd
 # from gradio_scribble2image import process_scribble
 # from gradio_seg2image import process_seg
 
 from utils import get_state_dict_path, download_model, model_dl_urls, annotator_dl_urls
 
-MODEL_TYPE = "canny"
+MODEL_TYPE = "mlsd"
 
 class Predictor(BasePredictor):
     def setup(self):
@@ -51,10 +51,10 @@ class Predictor(BasePredictor):
         eta: float = Input(description="Controls the amount of noise that is added to the input data during the denoising diffusion process. Higher value -> more noise", default=0.0),
         a_prompt: str = Input(description="Added Prompt to be appended", default="best quality, extremely detailed"),
         n_prompt: str = Input(description="Negative Prompt", default="longbody, lowres, bad anatomy, bad hands, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality"),
-        # detect_resolution: int = Input(description="Resolution for detection)", default=512, ge=128, le=1024), # only applicable when model type is 'HED', 'seg', or 'MLSD'
+        detect_resolution: int = Input(description="Resolution for detection)", default=512, ge=128, le=1024), # only applicable when model type is 'HED', 'seg', or 'MLSD'
         # bg_threshold: float = Input(description="Background Threshold (only applicable when model type is 'normal')", default=0.0, ge=0.0, le=1.0), # only applicable when model type is 'normal'
-        # value_threshold: float = Input(description="Value Threshold (only applicable when model type is 'MLSD')", default=0.1, ge=0.01, le=2.0), # only applicable when model type is 'MLSD'
-        # distance_threshold: float = Input(description="Distance Threshold (only applicable when model type is 'MLSD')", default=0.1, ge=0.01, le=20.0), # only applicable when model type is 'MLSD'
+        value_threshold: float = Input(description="Value Threshold (only applicable when model type is 'MLSD')", default=0.1, ge=0.01, le=2.0), # only applicable when model type is 'MLSD'
+        distance_threshold: float = Input(description="Distance Threshold (only applicable when model type is 'MLSD')", default=0.1, ge=0.01, le=20.0), # only applicable when model type is 'MLSD'
     ) -> List[Path]:
         """Run a single prediction on the model"""
         num_samples = int(num_samples)
@@ -69,22 +69,22 @@ class Predictor(BasePredictor):
         # convert to numpy
         input_image = np.array(input_image)
 
-        outputs = process_canny(
-            input_image,
-            prompt,
-            a_prompt,
-            n_prompt,
-            num_samples,
-            image_resolution,
-            ddim_steps,
-            scale,
-            seed,
-            eta,
-            low_threshold,
-            high_threshold,
-            self.model,
-            self.ddim_sampler,
-        )
+        #outputs = process_canny(
+        #    input_image,
+        #    prompt,
+        #    a_prompt,
+        #    n_prompt,
+        #    num_samples,
+        #    image_resolution,
+        #    ddim_steps,
+        #    scale,
+        #    seed,
+        #    eta,
+        #    low_threshold,
+        #    high_threshold,
+        #    self.model,
+        #    self.ddim_sampler,
+        #)
         # outputs = process_depth(
         #     input_image,
         #     prompt,
@@ -130,23 +130,23 @@ class Predictor(BasePredictor):
         #     self.model,
         #     self.ddim_sampler,
         # )
-        # outputs = process_mlsd(
-        #     input_image,
-        #     prompt,
-        #     a_prompt,
-        #     n_prompt,
-        #     num_samples,
-        #     image_resolution,
-        #     detect_resolution,
-        #     ddim_steps,
-        #     scale,
-        #     seed,
-        #     eta,
-        #     value_threshold,
-        #     distance_threshold,
-        #     self.model,
-        #     self.ddim_sampler,
-        # )
+        outputs = process_mlsd(
+             input_image,
+             prompt,
+             a_prompt,
+             n_prompt,
+             num_samples,
+             image_resolution,
+             detect_resolution,
+             ddim_steps,
+             scale,
+             seed,
+             eta,
+             value_threshold,
+             distance_threshold,
+             self.model,
+             self.ddim_sampler,
+        )
         # outputs = process_scribble(
         #     input_image,
         #     prompt,

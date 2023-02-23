@@ -35,7 +35,7 @@ class Predictor(BasePredictor):
         prompt: str = Input(description="Prompt for the model"),
         num_samples: str = Input(
             description="Number of samples (higher values may OOM)",
-            choices=['1', '4'],
+            choices=['1', '2', '3', '4'],
             default='1'
         ),
         image_resolution: str = Input(
